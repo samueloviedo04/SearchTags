@@ -1,17 +1,4 @@
-/*
-  Bugsitos encontrados o creados
-
-  1) el menu debe permanecer cerrado a menos que el usuario tenga el input en focus
-
-  2) si uno selecciona un item del menu y le da borrar no lo borra (al parecer solo pasa con el primer item)
-
-  3) al tener un chip en el input al darle el boton de borrar el menu cambia ofreciendote otras opciones cosa que no deberia,
-  osea pude poner cosas como (Usuario L200 o cliente Enrrique !=)
-
-*/
-
-
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
@@ -20,8 +7,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { withStyles } from '@material-ui/core/styles';
 import ChipInput from 'material-ui-chip-input';
 import Chip from '@material-ui/core/Chip';
-
-
 
 
 const Condition = {
@@ -45,10 +30,10 @@ const renderSuggestion = (suggestion, { query, isHighlighted }) => {
             {part.text}
           </span>
         ) : (
-            <span key={String(index)}>
-              {part.text}
-            </span>
-          )))}
+          <span key={String(index)}>
+            {part.text}
+          </span>
+        )))}
       </div>
     </MenuItem>
   );
@@ -132,38 +117,34 @@ const AutoSuggest = ({
     }
   };
 
+  const reCalculatorId = (filteredChips) => filteredChips.map((e, filteredIndex) => {
+    e.index = filteredIndex + 1;
+    return e;
+  });
+
   const deleteChip = (chipIndex) => {
     let filteredChips = valueChips.filter((e) => !(e.index <= chipIndex && e.index >= (chipIndex - 2)));
-    filteredChips = reCalculatorId(filteredChips)
+    filteredChips = reCalculatorId(filteredChips);
     setValue(filteredChips.map((e) => e.value));
     setValueChips(filteredChips);
     setIndex(chipIndex + 1);
   };
 
   const deleteChipInput = (chips, chipIndex) => {
-    if (step === 0 && valueChips.length === 0)
-      return;
+    if (step === 0 && valueChips.length === 0) { return; }
     if (index === 0 && valueChips.length === 0) {
       return;
     }
 
     const chipNewIndex = chipIndex + 1;
     let filteredChips = valueChips.filter((e) => e.index !== chipNewIndex);
-    filteredChips = reCalculatorId(filteredChips)
-    console.log("elimina", filteredChips)
+    filteredChips = reCalculatorId(filteredChips);
+
     setValue(filteredChips.map((e) => e.value));
     setValueChips(filteredChips);
     setStep(getStepRegression());
     setIndex(chipNewIndex);
   };
-
-  const reCalculatorId = (valueChips) => {
-    return valueChips.map((e, index) => {
-      e.index = index + 1
-      return e;
-    });
-
-  }
 
   const renderInput = ({ onChange, ref }) => (
     <ChipInput
@@ -218,11 +199,9 @@ const AutoSuggest = ({
     onAdd: (chip) => handleAddChip(chip),
   };
 
-  const result = () => {
-    return valueChips.map((e) => (e.value))
-  }
+  const result = () => valueChips.map((e) => (e.value));
 
-  console.log(result())
+  console.log(result());
   return (
     <Autosuggest
       theme={{
