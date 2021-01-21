@@ -11,7 +11,7 @@
 */
 
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Autosuggest from 'react-autosuggest';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
@@ -20,6 +20,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { withStyles } from '@material-ui/core/styles';
 import ChipInput from 'material-ui-chip-input';
 import Chip from '@material-ui/core/Chip';
+
+
 
 
 const Condition = {
@@ -43,10 +45,10 @@ const renderSuggestion = (suggestion, { query, isHighlighted }) => {
             {part.text}
           </span>
         ) : (
-          <span key={String(index)}>
-            {part.text}
-          </span>
-        )))}
+            <span key={String(index)}>
+              {part.text}
+            </span>
+          )))}
       </div>
     </MenuItem>
   );
@@ -70,6 +72,7 @@ const AutoSuggest = ({
 }) => {
   const [selectItem, setSelectItem] = useState({});
   const [value, setValue] = useState([]);
+  const [focus, setFocus] = useState(false);
   const [valueChips, setValueChips] = useState([]);
   const [textFieldInput, setTextFieldInput] = useState('');
   const [step, setStep] = useState(0);
@@ -78,7 +81,6 @@ const AutoSuggest = ({
   const limitStep = 3;
 
   const getSugesstion = () => {
-    console.log(step);
     switch (step) {
       case 0:
         return data.map((e) => ({ name: e.name }));
@@ -106,7 +108,6 @@ const AutoSuggest = ({
   };
 
   const handletextFieldInputChange = (event, { newValue }) => {
-    console.log(event);
     setTextFieldInput(newValue);
   };
 
@@ -132,29 +133,42 @@ const AutoSuggest = ({
   };
 
   const deleteChip = (chipIndex) => {
-    const filteredChips = valueChips.filter((e) => !(e.index <= chipIndex && e.index >= (chipIndex - 2)));
-
+    let filteredChips = valueChips.filter((e) => !(e.index <= chipIndex && e.index >= (chipIndex - 2)));
+    filteredChips = reCalculatorId(filteredChips)
     setValue(filteredChips.map((e) => e.value));
     setValueChips(filteredChips);
     setIndex(chipIndex + 1);
   };
 
   const deleteChipInput = (chips, chipIndex) => {
+    if (step === 0 && valueChips.length === 0)
+      return;
     if (index === 0 && valueChips.length === 0) {
       return;
     }
 
     const chipNewIndex = chipIndex + 1;
-    const filteredChips = valueChips.filter((e) => e.index !== chipIndex);
-
+    let filteredChips = valueChips.filter((e) => e.index !== chipNewIndex);
+    filteredChips = reCalculatorId(filteredChips)
+    console.log("elimina", filteredChips)
     setValue(filteredChips.map((e) => e.value));
     setValueChips(filteredChips);
     setStep(getStepRegression());
     setIndex(chipNewIndex);
   };
 
+  const reCalculatorId = (valueChips) => {
+    return valueChips.map((e, index) => {
+      e.index = index + 1
+      return e;
+    });
+
+  }
+
   const renderInput = ({ onChange, ref }) => (
     <ChipInput
+      onFocus={() => setFocus(true)}
+      onBlur={() => setFocus(false)}
       clearInputValueOnChange
       dataSource={valueChips}
       dataSourceConfig={{
@@ -198,11 +212,17 @@ const AutoSuggest = ({
     chips: value,
     value: textFieldInput,
     valueChips,
+    autoFocus: true,
     isdelete: step === limitStep,
     onChange: handletextFieldInputChange,
     onAdd: (chip) => handleAddChip(chip),
   };
 
+  const result = () => {
+    return valueChips.map((e) => (e.value))
+  }
+
+  console.log(result())
   return (
     <Autosuggest
       theme={{
@@ -213,14 +233,14 @@ const AutoSuggest = ({
       }}
       renderInputComponent={renderInput}
       suggestions={getSugesstion()}
+      onSuggestionsFetchRequested={() => { }}
+      onSuggestionsClearRequested={() => { }}
       renderSuggestionsContainer={renderSuggestionsContainer}
-      onSuggestionsFetchRequested={() => {}}
-      onSuggestionsClearRequested={() => {}}
       getSuggestionValue={getSuggestionValue}
       renderSuggestion={renderSuggestion}
       onSuggestionSelected={(e, { suggestionValue }) => { handleAddChip(suggestionValue); e.preventDefault(); }}
-      alwaysRenderSuggestions={alwaysRenderSuggestions}
-      onBlur={(e) => console.log(e)}
+      shouldRenderSuggestions={() => true}
+      alwaysRenderSuggestions={focus}
       inputProps={{
         ...inputProps,
         ...other,
