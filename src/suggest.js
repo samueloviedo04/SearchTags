@@ -1,4 +1,11 @@
-import React, { useState } from 'react';
+// al completar el Chip, osea que se unan 3, deberia cerrarme las opciones.
+// importante, que se pueda escribir algo despues de la condicion, ejm: status > *escrito a mano* y que al darle enter o espacio (uno de los dos) se agrege al chip osea se unan los 3
+// ignorar cualquier cosa que haya en el campo de texto que no tenga el formato de Columna, condicion, valor. ejm: status = 2 esta bien pero que diga algo como: status nombre = carlos ahi se deberia el ouput decir: nombre = carlos sin el status
+// si ya elegi una opcion y la complete ejm: nombre = jose, al abrirlo otra vez no deberia ofrecerme como opcion nombre otra vez
+// alguna posibilidad de que en las opciones tengan iconos? que yo le ponga el icono en el objeto que se le pasa por prop, o como lo veas
+
+
+import React, { useEffect, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
@@ -53,8 +60,9 @@ const getSuggestionValue = (suggestion) => suggestion.name;
 
 
 const AutoSuggest = ({
-  data, classes, styleChip, allowDuplicates, alwaysRenderSuggestions, ...other
+  data, classes, styleChip, allowDuplicates, alwaysRenderSuggestions, setAutoSuggestResult = () => {}, ...other
 }) => {
+  const limitStep = 3;
   const [selectItem, setSelectItem] = useState({});
   const [value, setValue] = useState([]);
   const [focus, setFocus] = useState(false);
@@ -63,7 +71,23 @@ const AutoSuggest = ({
   const [step, setStep] = useState(0);
   const [index, setIndex] = useState(1);
 
-  const limitStep = 3;
+
+  useEffect(() => {
+    let secondAcc = [];
+    const acc = [];
+
+    valueChips.forEach((val) => {
+      if (val.delete) {
+        secondAcc.push(val);
+        acc.push(secondAcc);
+        secondAcc = [];
+      } else {
+        secondAcc.push(val);
+      }
+    });
+
+    setAutoSuggestResult(acc);
+  }, [valueChips, setAutoSuggestResult]);
 
   const getSugesstion = () => {
     switch (step) {
@@ -152,6 +176,7 @@ const AutoSuggest = ({
       onBlur={() => setFocus(false)}
       clearInputValueOnChange
       dataSource={valueChips}
+      disableUnderline
       dataSourceConfig={{
         text: 'text', value: 'value', delete: 'isdelete', index: 'index',
       }}
@@ -165,19 +190,21 @@ const AutoSuggest = ({
         }
 
         const style = {
-          backgroundColor: '#dddddd',
+          backgroundColor: '#f0f0f0',
           borderRadius: '2px',
+          margin: 'auto',
+          marginRight: '8px',
           ...styleChip,
         };
 
         if (!chip.delete) {
-          style.margin = '0px 0px 8px 0px';
+          style.marginRight = '0px';
         }
 
         return (
           <Chip
             key={key}
-            className={className}
+            className={`${className}`}
             style={style}
             onClick={handleClick}
             label={chip.text}
@@ -199,9 +226,7 @@ const AutoSuggest = ({
     onAdd: (chip) => handleAddChip(chip),
   };
 
-  const result = () => valueChips.map((e) => (e.value));
 
-  console.log(result());
   return (
     <Autosuggest
       theme={{
@@ -232,6 +257,11 @@ const styles = (theme) => ({
   container: {
     flexGrow: 1,
     position: 'relative',
+    border: '1px solid #E4E6EF',
+    borderRadius: '0.42rem',
+    paddingLeft: '0.65rem',
+    paddingRight: '0.65rem',
+    // paddingTop: 10,
   },
   suggestionsContainerOpen: {
     position: 'absolute',
