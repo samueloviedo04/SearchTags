@@ -1,8 +1,14 @@
-// al completar el Chip, osea que se unan 3, deberia cerrarme las opciones.
+// al completar el Chip, osea que se unan 3, deberia cerrarme las opciones. OK
+
 // importante, que se pueda escribir algo despues de la condicion, ejm: status > *escrito a mano* y que al darle enter o espacio (uno de los dos) se agrege al chip osea se unan los 3
+
 // ignorar cualquier cosa que haya en el campo de texto que no tenga el formato de Columna, condicion, valor. ejm: status = 2 esta bien pero que diga algo como: status nombre = carlos ahi se deberia el ouput decir: nombre = carlos sin el status
-// si ya elegi una opcion y la complete ejm: nombre = jose, al abrirlo otra vez no deberia ofrecerme como opcion nombre otra vez
-// alguna posibilidad de que en las opciones tengan iconos? que yo le ponga el icono en el objeto que se le pasa por prop, o como lo veas
+
+
+// si ya elegi una opcion y la complete ejm: nombre = jose, al abrirlo otra vez no deberia ofrecerme como opcion nombre otra vez OK 
+// alguna posibilidad de que en las opciones tengan iconos? que yo le ponga el icono en el objeto que se le pasa por prop, o como lo veas OK
+
+
 
 
 import React, { useEffect, useState } from 'react';
@@ -14,6 +20,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { withStyles } from '@material-ui/core/styles';
 import ChipInput from 'material-ui-chip-input';
 import Chip from '@material-ui/core/Chip';
+import Icon from '@material-ui/core/Icon';
 
 
 const Condition = {
@@ -23,6 +30,7 @@ const Condition = {
 
 
 const renderSuggestion = (suggestion, { query, isHighlighted }) => {
+
   const matches = match(suggestion.name, query);
   const parts = parse(suggestion.name, matches);
   return (
@@ -32,15 +40,11 @@ const renderSuggestion = (suggestion, { query, isHighlighted }) => {
       onMouseDown={(e) => e.preventDefault()} // prevent the click causing the input to be blurred
     >
       <div>
-        {parts.map((part, index) => (part.highlight ? (
+        {parts.map((part, index) =>
           <span key={String(index)} style={{ fontWeight: 500 }}>
+            {suggestion.icon !== undefined ? <Icon>{suggestion.icon}</Icon> : undefined}
             {part.text}
-          </span>
-        ) : (
-          <span key={String(index)}>
-            {part.text}
-          </span>
-        )))}
+          </span>)}
       </div>
     </MenuItem>
   );
@@ -56,11 +60,11 @@ const renderSuggestionsContainer = (options) => {
   );
 };
 
-const getSuggestionValue = (suggestion) => suggestion.name;
+const getSuggestionValue = (suggestion) => { return suggestion.name };
 
 
 const AutoSuggest = ({
-  data, classes, styleChip, allowDuplicates, alwaysRenderSuggestions, setAutoSuggestResult = () => {}, ...other
+  data, classes, styleChip, allowDuplicates, alwaysRenderSuggestions, searchCondition, setAutoSuggestResult = () => { }, ...other
 }) => {
   const limitStep = 3;
   const [selectItem, setSelectItem] = useState({});
@@ -89,16 +93,25 @@ const AutoSuggest = ({
     setAutoSuggestResult(acc);
   }, [valueChips, setAutoSuggestResult]);
 
+  const arrayResults = () => {
+    return valueChips.map((e) => (e.value));
+  }
+
   const getSugesstion = () => {
     switch (step) {
       case 0:
-        return data.map((e) => ({ name: e.name }));
+        let values = arrayResults();
+        let filter = data.filter((e) => (!values.includes(e.value)))
+        return filter.map((e) => ({ name: e.name, icon: e.icon }));
       case 1:
         return Condition[selectItem.type];
       case 2:
         return selectItem.data;
       default:
         setStep(0);
+        if (valueChips.length > 0) {
+          setFocus(false)
+        }
         return data.map((e) => e.name);
     }
   };
@@ -118,18 +131,23 @@ const AutoSuggest = ({
 
   const handletextFieldInputChange = (event, { newValue }) => {
     setTextFieldInput(newValue);
+    if (step === 2 && searchCondition)
+      searchCondition(newValue)
   };
 
   const handleAddChip = (chip) => {
+
     if (typeof (chip) !== 'string') {
       return;
     }
 
     if (allowDuplicates || value.indexOf(chip) < 0) {
-      const dataSelect = step === 0 ? data.find((e) => e.name === chip).value : chip;
+      const Select = data.find((e) => e.name === chip);
+      const dataSelect = step === 0 ? Select.value : chip;
+      const iconSelect = Select !== undefined ? Select.icon : undefined;
 
       const newData = {
-        index, delete: step === (limitStep - 1), value: dataSelect, text: chip,
+        index, delete: step === (limitStep - 1), value: dataSelect, text: chip, icon: iconSelect
       };
 
       setValue([...value, chip]);
@@ -174,17 +192,14 @@ const AutoSuggest = ({
     <ChipInput
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
-      clearInputValueOnChange
-      dataSource={valueChips}
+      onClick={() => setFocus(true)}
       disableUnderline
-      dataSourceConfig={{
-        text: 'text', value: 'value', delete: 'isdelete', index: 'index',
-      }}
       value={valueChips}
       onUpdateInput={onChange}
       inputRef={ref}
       onDelete={(c, i) => deleteChipInput(c, i)}
       chipRenderer={({ className, chip, handleClick }, key) => {
+
         if (chip.text.value !== undefined) {
           return null;
         }
@@ -203,6 +218,7 @@ const AutoSuggest = ({
 
         return (
           <Chip
+            icon={chip.icon ? <Icon>{chip.icon}</Icon> : undefined}
             key={key}
             className={`${className}`}
             style={style}
@@ -243,7 +259,7 @@ const AutoSuggest = ({
       getSuggestionValue={getSuggestionValue}
       renderSuggestion={renderSuggestion}
       onSuggestionSelected={(e, { suggestionValue }) => { handleAddChip(suggestionValue); e.preventDefault(); }}
-      shouldRenderSuggestions={() => true}
+      shouldRenderSuggestions={() => false}
       alwaysRenderSuggestions={focus}
       inputProps={{
         ...inputProps,

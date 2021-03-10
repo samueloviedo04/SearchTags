@@ -1,8 +1,6 @@
 import React from 'react'
 
-import {
-  MyReactAutosuggest,
-} from './suggest'
+import MyReactAutosuggest from './suggest'
 
 class CustomTags extends React.Component {
 
@@ -12,28 +10,28 @@ class CustomTags extends React.Component {
         { name: 'Samuel' },
         { name: 'Suichin' },
         { name: 'Adham' }
-      ], type: 'string'
+      ], type: 'string', icon: 'fingerprint'
     },
     {
       name: 'Dispositivo', value: 't365_Clientes', data: [
         { name: 'L200' },
         { name: 'Camion' },
         { name: 'Corse' }
-      ], type: 'string'
+      ], type: 'string', icon: 'settings_input_hdmi'
     },
     {
       name: 'Cliente', value: 't365_ESOOO', data: [
         { name: 'Enrrique' },
         { name: 'Adham' },
         { name: 'Sofia' }
-      ], type: 'string'
+      ], type: 'string', icon: 'sentiment_satisfied_alt'
     },
     {
       name: 'Trama', value: 't365_Tramas', data: [
         { name: '100' },
         { name: '200' },
         { name: '300' }
-      ], type: 'integer'
+      ], type: 'integer', icon: 'dynamic_feed'
     }
   ]
 
@@ -45,9 +43,12 @@ class CustomTags extends React.Component {
             label='Busqueda avanzada'
             placeholder='Buscar'
             data={this.data}
-            styleChip={{ color: "#ff1122" }}
+            styleChip={{ color: "#000" }}
             fullWidth
             allowDuplicates
+            searchCondition={(text) => {
+              console.log(text)
+            }}
           />
         </div>
       </>
