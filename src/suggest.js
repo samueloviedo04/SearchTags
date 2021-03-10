@@ -132,7 +132,7 @@ const AutoSuggest = ({
   const handletextFieldInputChange = (event, { newValue }) => {
     setTextFieldInput(newValue);
     if (step === 2 && searchCondition)
-      searchCondition(newValue)
+      searchCondition(newValue)//adham aqui va la funcion
   };
 
   const handleAddChip = (chip) => {
