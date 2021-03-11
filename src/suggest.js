@@ -64,7 +64,7 @@ const getSuggestionValue = (suggestion) => { return suggestion.name };
 
 
 const AutoSuggest = ({
-  data, classes, styleChip, allowDuplicates, alwaysRenderSuggestions, searchCondition, setAutoSuggestResult = () => { }, ...other
+  data, classes, styleChip, allowDuplicates, searchCondition, setAutoSuggestResult = () => { }, ...other
 }) => {
   const limitStep = 3;
   const [selectItem, setSelectItem] = useState({});
@@ -135,7 +135,7 @@ const AutoSuggest = ({
       searchCondition(newValue)//adham aqui va la funcion
   };
 
-  const handleAddChip = (chip) => {
+  const handleAddChip = (chip, origin) => {
 
     if (typeof (chip) !== 'string') {
       return;
@@ -143,6 +143,7 @@ const AutoSuggest = ({
 
     if (allowDuplicates || value.indexOf(chip) < 0) {
       const Select = data.find((e) => e.name === chip);
+      if (Select === undefined && step !== 2 && origin === "key") return
       const dataSelect = step === 0 ? Select.value : chip;
       const iconSelect = Select !== undefined ? Select.icon : undefined;
 
@@ -188,7 +189,7 @@ const AutoSuggest = ({
     setIndex(chipNewIndex);
   };
 
-  const renderInput = ({ onChange, ref }) => (
+  const renderInput = ({ onAdd, onChange, ref }) => (
     <ChipInput
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
@@ -196,6 +197,7 @@ const AutoSuggest = ({
       disableUnderline
       value={valueChips}
       onUpdateInput={onChange}
+      onAdd={onAdd}
       inputRef={ref}
       onDelete={(c, i) => deleteChipInput(c, i)}
       chipRenderer={({ className, chip, handleClick }, key) => {
@@ -239,7 +241,7 @@ const AutoSuggest = ({
     autoFocus: true,
     isdelete: step === limitStep,
     onChange: handletextFieldInputChange,
-    onAdd: (chip) => handleAddChip(chip),
+    onAdd: (chip) => handleAddChip(chip, "key"),
   };
 
 
@@ -258,7 +260,7 @@ const AutoSuggest = ({
       renderSuggestionsContainer={renderSuggestionsContainer}
       getSuggestionValue={getSuggestionValue}
       renderSuggestion={renderSuggestion}
-      onSuggestionSelected={(e, { suggestionValue }) => { handleAddChip(suggestionValue); e.preventDefault(); }}
+      onSuggestionSelected={(e, { suggestionValue }) => { handleAddChip(suggestionValue, "suggest"); e.preventDefault(); }}
       shouldRenderSuggestions={() => false}
       alwaysRenderSuggestions={focus}
       inputProps={{
