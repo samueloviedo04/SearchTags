@@ -45,6 +45,7 @@ class CustomTags extends React.Component {
             data={this.data}
             styleChip={{ color: "#000" }}
             fullWidth
+            loading={false}
             allowDuplicates
             searchCondition={(text) => {
               console.log(text)

@@ -9,6 +9,10 @@
 // alguna posibilidad de que en las opciones tengan iconos? que yo le ponga el icono en el objeto que se le pasa por prop, o como lo veas OK
 
 
+// es valor no condicion ok
+//el borrar
+//cambio la key enter   ok
+//loading' ok
 
 
 import React, { useEffect, useState } from 'react';
@@ -64,7 +68,7 @@ const getSuggestionValue = (suggestion) => { return suggestion.name };
 
 
 const AutoSuggest = ({
-  data, classes, styleChip, allowDuplicates, searchCondition, setAutoSuggestResult = () => { }, ...other
+  data, classes, styleChip, allowDuplicates, loading, searchCondition, setAutoSuggestResult = () => { }, ...other
 }) => {
   const limitStep = 3;
   const [selectItem, setSelectItem] = useState({});
@@ -100,13 +104,14 @@ const AutoSuggest = ({
   const getSugesstion = () => {
     switch (step) {
       case 0:
-        let values = arrayResults();
-        let filter = data.filter((e) => (!values.includes(e.value)))
-        return filter.map((e) => ({ name: e.name, icon: e.icon }));
+        return data.map((e) => ({ name: e.name, icon: e.icon }));
       case 1:
         return Condition[selectItem.type];
       case 2:
-        return selectItem.data;
+        let values = arrayResults();
+        console.log(values)
+        let filter = selectItem.data.filter((e) => (!values.includes(e.name)))
+        return filter;
       default:
         setStep(0);
         if (valueChips.length > 0) {
@@ -179,7 +184,8 @@ const AutoSuggest = ({
       return;
     }
 
-    const chipNewIndex = chipIndex + 1;
+    console.log(valueChips)
+    const chipNewIndex = valueChips.length;
     let filteredChips = valueChips.filter((e) => e.index !== chipNewIndex);
     filteredChips = reCalculatorId(filteredChips);
 
@@ -194,6 +200,7 @@ const AutoSuggest = ({
       onFocus={() => setFocus(true)}
       onBlur={() => setFocus(false)}
       onClick={() => setFocus(true)}
+      newChipKeys={[" "]}
       disableUnderline
       value={valueChips}
       onUpdateInput={onChange}
@@ -246,28 +253,31 @@ const AutoSuggest = ({
 
 
   return (
-    <Autosuggest
-      theme={{
-        container: classes.container,
-        suggestionsContainerOpen: classes.suggestionsContainerOpen,
-        suggestionsList: classes.suggestionsList,
-        suggestion: classes.suggestion,
-      }}
-      renderInputComponent={renderInput}
-      suggestions={getSugesstion()}
-      onSuggestionsFetchRequested={() => { }}
-      onSuggestionsClearRequested={() => { }}
-      renderSuggestionsContainer={renderSuggestionsContainer}
-      getSuggestionValue={getSuggestionValue}
-      renderSuggestion={renderSuggestion}
-      onSuggestionSelected={(e, { suggestionValue }) => { handleAddChip(suggestionValue, "suggest"); e.preventDefault(); }}
-      shouldRenderSuggestions={() => false}
-      alwaysRenderSuggestions={focus}
-      inputProps={{
-        ...inputProps,
-        ...other,
-      }}
-    />
+    <div style={{ display: 'flex' }}>
+      <Autosuggest
+        theme={{
+          container: classes.container,
+          suggestionsContainerOpen: classes.suggestionsContainerOpen,
+          suggestionsList: classes.suggestionsList,
+          suggestion: classes.suggestion,
+        }}
+        renderInputComponent={renderInput}
+        suggestions={getSugesstion()}
+        onSuggestionsFetchRequested={() => { }}
+        onSuggestionsClearRequested={() => { }}
+        renderSuggestionsContainer={renderSuggestionsContainer}
+        getSuggestionValue={getSuggestionValue}
+        renderSuggestion={renderSuggestion}
+        onSuggestionSelected={(e, { suggestionValue }) => { handleAddChip(suggestionValue, "suggest"); e.preventDefault(); }}
+        shouldRenderSuggestions={() => false}
+        alwaysRenderSuggestions={!loading && focus}
+        inputProps={{
+          ...inputProps,
+          ...other,
+        }}
+      />
+      {loading && <p style={{ marginLeft: 20 }}>loading</p>}
+    </div>
   );
 };
 
