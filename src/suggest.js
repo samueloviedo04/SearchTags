@@ -29,9 +29,11 @@ import Icon from '@material-ui/core/Icon';
 
 const Condition = {
   string: [{ name: '=' }, { name: '!=' }],
+  boolean: [{ name: '=' }, { name: '!=' }],
   integer: [{ name: '=' }, { name: '!=' }, { name: '<' }, { name: '<=' }, { name: '>' }, { name: '>=' }],
 };
 
+const suggestBoolean = [{ name: 'True' }, { name: 'False' }]
 
 const renderSuggestion = (suggestion, { query, isHighlighted }) => {
 
@@ -108,8 +110,10 @@ const AutoSuggest = ({
       case 1:
         return Condition[selectItem.type];
       case 2:
+        if (selectItem.type === 'boolean') {
+          return suggestBoolean;
+        }
         let values = arrayResults();
-        console.log(values)
         let filter = selectItem.data.filter((e) => (!values.includes(e.name)))
         return filter;
       default:

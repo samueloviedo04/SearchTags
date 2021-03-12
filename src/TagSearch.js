@@ -32,6 +32,9 @@ class CustomTags extends React.Component {
         { name: '200' },
         { name: '300' }
       ], type: 'integer', icon: 'dynamic_feed'
+    },
+    {
+      name: 'Suzy', value: 't365_Suzy', type: 'boolean', icon: 'pregnant_woman'
     }
   ]
 
