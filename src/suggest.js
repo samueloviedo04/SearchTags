@@ -110,6 +110,9 @@ const AutoSuggest = ({
       case 1:
         return Condition[selectItem.type];
       case 2:
+        if (loading) {
+          return [{ name: 'Loading...' }]
+        }
         if (selectItem.type === 'boolean') {
           return suggestBoolean;
         }
@@ -257,31 +260,28 @@ const AutoSuggest = ({
 
 
   return (
-    <div style={{ display: 'flex' }}>
-      <Autosuggest
-        theme={{
-          container: classes.container,
-          suggestionsContainerOpen: classes.suggestionsContainerOpen,
-          suggestionsList: classes.suggestionsList,
-          suggestion: classes.suggestion,
-        }}
-        renderInputComponent={renderInput}
-        suggestions={getSugesstion()}
-        onSuggestionsFetchRequested={() => { }}
-        onSuggestionsClearRequested={() => { }}
-        renderSuggestionsContainer={renderSuggestionsContainer}
-        getSuggestionValue={getSuggestionValue}
-        renderSuggestion={renderSuggestion}
-        onSuggestionSelected={(e, { suggestionValue }) => { handleAddChip(suggestionValue, "suggest"); e.preventDefault(); }}
-        shouldRenderSuggestions={() => false}
-        alwaysRenderSuggestions={!loading && focus}
-        inputProps={{
-          ...inputProps,
-          ...other,
-        }}
-      />
-      {loading && <p style={{ marginLeft: 20 }}>loading</p>}
-    </div>
+    <Autosuggest
+      theme={{
+        container: classes.container,
+        suggestionsContainerOpen: classes.suggestionsContainerOpen,
+        suggestionsList: classes.suggestionsList,
+        suggestion: classes.suggestion,
+      }}
+      renderInputComponent={renderInput}
+      suggestions={getSugesstion()}
+      onSuggestionsFetchRequested={() => { }}
+      onSuggestionsClearRequested={() => { }}
+      renderSuggestionsContainer={renderSuggestionsContainer}
+      getSuggestionValue={getSuggestionValue}
+      renderSuggestion={renderSuggestion}
+      onSuggestionSelected={(e, { suggestionValue }) => { handleAddChip(suggestionValue, "suggest"); e.preventDefault(); }}
+      shouldRenderSuggestions={() => false}
+      alwaysRenderSuggestions={focus}
+      inputProps={{
+        ...inputProps,
+        ...other,
+      }}
+    />
   );
 };
 
