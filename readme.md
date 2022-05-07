@@ -8,6 +8,14 @@ npm install
 ```
 ## props
 ```bash
+data(array[object])
+```
+## Object
+-name:name to display <br/>
+-name:name to display <br/>
+
+## props
+```bash
 setAutoSuggestResult(function)
 ```
 
