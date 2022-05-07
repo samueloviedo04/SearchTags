@@ -11,11 +11,11 @@ npm install
 data(array[object])
 ```
 ## Object
-*name:name to display <br/>
-*value:value for name to be displayed (this can be a database table, ref to some variable or action) <br/>
-*data: object array that will contain the list {name:"element"} <br/>
-*type:type of conditional depending on the variable to compare. string,integer,boolean <br/>
-*icon: icons to display https://mui.com/material-ui/material-icons/
+* name:name to display <br/>
+* value:value for name to be displayed (this can be a database table, ref to some variable or action) <br/>
+* data: object array that will contain the list {name:"element"} <br/>
+* type:type of conditional depending on the variable to compare. string,integer,boolean <br/>
+* icon: icons to display https://mui.com/material-ui/material-icons/
 
 ## props
 ```bash
