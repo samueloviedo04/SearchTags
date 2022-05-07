@@ -2,6 +2,8 @@
 
 search engine in the form of a group tag!
 
+![img](https://raw.githubusercontent.com/samueloviedo04/SearchTags/main/img/element.png)
+
 ## Installation
 ```bash
 npm install
