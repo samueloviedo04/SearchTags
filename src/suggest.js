@@ -1,20 +1,3 @@
-// al completar el Chip, osea que se unan 3, deberia cerrarme las opciones. OK
-
-// importante, que se pueda escribir algo despues de la condicion, ejm: status > *escrito a mano* y que al darle enter o espacio (uno de los dos) se agrege al chip osea se unan los 3
-
-// ignorar cualquier cosa que haya en el campo de texto que no tenga el formato de Columna, condicion, valor. ejm: status = 2 esta bien pero que diga algo como: status nombre = carlos ahi se deberia el ouput decir: nombre = carlos sin el status
-
-
-// si ya elegi una opcion y la complete ejm: nombre = jose, al abrirlo otra vez no deberia ofrecerme como opcion nombre otra vez OK 
-// alguna posibilidad de que en las opciones tengan iconos? que yo le ponga el icono en el objeto que se le pasa por prop, o como lo veas OK
-
-
-// es valor no condicion ok
-//el borrar
-//cambio la key enter   ok
-//loading' ok
-
-
 import React, { useEffect, useState } from 'react';
 import Autosuggest from 'react-autosuggest';
 import match from 'autosuggest-highlight/match';
@@ -191,7 +174,6 @@ const AutoSuggest = ({
       return;
     }
 
-    console.log(valueChips)
     const chipNewIndex = valueChips.length;
     let filteredChips = valueChips.filter((e) => e.index !== chipNewIndex);
     filteredChips = reCalculatorId(filteredChips);

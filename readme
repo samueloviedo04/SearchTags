@@ -1,3 +1,33 @@
+# SearchTag
+
+search engine in the form of a group tag!
+
+## Installation
+```bash
+npm install
+```
+## props
+```bash
+setAutoSuggestResult(function)
+```
+
+## Return
+```bash
+array elements select
+```
+
+## props
+```bash
+searchCondition(function)
+```
+
+## Return
+```bash
+string value
+```
+
+## Example use
+```bash
 import React from 'react'
 import MyReactAutosuggest from './suggest'
 
@@ -10,20 +40,6 @@ class CustomTags extends React.Component {
         { name: 'Suichin' },
         { name: 'Adham' }
       ], type: 'string', icon: 'fingerprint'
-    },
-    {
-      name: 'Dispositivo', value: 'table_devices', data: [
-        { name: 'L200' },
-        { name: 'Camion' },
-        { name: 'Corse' }
-      ], type: 'string', icon: 'settings_input_hdmi'
-    },
-    {
-      name: 'Cliente', value: 'table_clients', data: [
-        { name: 'Enrrique' },
-        { name: 'Adham' },
-        { name: 'Sofia' }
-      ], type: 'string', icon: 'sentiment_satisfied_alt'
     },
     {
       name: 'Trama', value: 'table_queue', data: [
@@ -42,8 +58,8 @@ class CustomTags extends React.Component {
       <>
         <div style={{ margin: "auto", padding: "51px" }}>
           <MyReactAutosuggest
-            label='Busqueda avanzada'
-            placeholder='Buscar'
+            label='Advanced search'
+            placeholder='Search'
             data={this.data}
             styleChip={{ color: "#000" }}
             fullWidth
@@ -63,3 +79,8 @@ class CustomTags extends React.Component {
 }
 
 export default CustomTags;
+```
+
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
